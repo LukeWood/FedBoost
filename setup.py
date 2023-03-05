@@ -45,7 +45,7 @@ setup(
             "tensorflow",
             "tensorflow_datasets",
             "matplotlib",
-            "seaborn"
+            "seaborn",
         ],
     },
     classifiers=[

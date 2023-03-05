@@ -1,5 +1,12 @@
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout, Activation
+from tensorflow.keras.layers import (
+    Conv2D,
+    MaxPooling2D,
+    Dense,
+    Flatten,
+    Dropout,
+    Activation,
+)
 from tensorflow.keras.utils import to_categorical
 import tensorflow.keras.datasets.cifar10 as cf
 import numpy as np
@@ -37,10 +44,15 @@ class Client:
         self.dropout = Dropout(0.5)
         self.flatten = Flatten()
         self.dense = Dense(output_class_size, activation=None)
-        self.softmax = Activation('softmax')
+        self.softmax = Activation("softmax")
         self.model = Sequential(
             [
-                self.conv, self.max_pool, self.dropout, self.flatten, self.dense, self.softmax
+                self.conv,
+                self.max_pool,
+                self.dropout,
+                self.flatten,
+                self.dense,
+                self.softmax,
             ]
         )
         self.model.compile(
@@ -51,9 +63,7 @@ class Client:
 
         # doesn't need softmax
         self.model_without_softmax = Sequential(
-            [
-                self.conv, self.max_pool, self.dropout, self.flatten, self.dense
-            ]
+            [self.conv, self.max_pool, self.dropout, self.flatten, self.dense]
         )
 
     def _set_data(self):
@@ -67,7 +77,6 @@ class Client:
         # Normalize the images.
         self.train_images = (self.train_images / 255) - 0.5
         self.test_images = (self.test_images / 255) - 0.5
-
 
     def divide_weights(self, n):
         newweights = []
@@ -87,9 +96,7 @@ class Client:
             return sum
 
     def train_model(self):
-        callbacks = [
-            tf.keras.callbacks.EarlyStopping(patience=3,monitor="accuracy")
-        ]
+        callbacks = [tf.keras.callbacks.EarlyStopping(patience=3, monitor="accuracy")]
         self.model.fit(
             self.train_images,
             to_categorical(self.train_labels, output_class_size),
@@ -98,7 +105,7 @@ class Client:
                 self.train_images,
                 to_categorical(self.train_labels, output_class_size),
             ),
-            callbacks=callbacks
+            callbacks=callbacks,
         )
 
     def load_model(self, path):

@@ -26,8 +26,10 @@ def main():
     parser.add_argument(
         "--models_dir",
         required=True,
-        help=("Path of the pre-trained weak learners.  Can be produced by "
-            "the script `entrypoints/train-weak-learners.py`."),
+        help=(
+            "Path of the pre-trained weak learners.  Can be produced by "
+            "the script `entrypoints/train-weak-learners.py`."
+        ),
     )
 
     parser.add_argument(
