@@ -37,7 +37,7 @@ class GDBoostServer(Server):
         )
         self.model.compile(
             "adam",
-            loss="lse",
+            loss="categorical_crossentropy",
             metrics=["accuracy"],
         )
         print(f"Weak learners are loaded")
@@ -76,8 +76,8 @@ class GDBoostServer(Server):
             to_categorical(self.train_labels, output_class_size),
             epochs=client_epochs,
             validation_data=(
-                self.test_images,
-                to_categorical(self.test_labels, output_class_size),
+                self.w_matrix,
+                to_categorical(self.train_labels, output_class_size),
             ),
         )
 
