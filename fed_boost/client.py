@@ -1,5 +1,5 @@
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout, Activation
 from tensorflow.keras.utils import to_categorical
 import tensorflow.keras.datasets.cifar10 as cf
 import numpy as np
@@ -38,50 +38,36 @@ class Client:
         self.train_images = (self.train_images / 255) - 0.5
         self.test_images = (self.test_images / 255) - 0.5
 
-    def _set_model(self):
+        self.conv = Conv2D(
+            num_filters,
+            filter_size,
+            input_shape=input_image_shape,
+            # strides=2,
+            # padding='same',
+            # activation='relu'
+        )
+        self.max_pool = MaxPooling2D(pool_size=pool_size),
+        self.dropout = Dropout(0.5)
+        self.flatten = Flatten()
+        self.dense = Dense(output_class_size, activation=None)
+        self.softmax = Activation('softmax')
         self.model = Sequential(
             [
-                Conv2D(
-                    num_filters,
-                    filter_size,
-                    input_shape=input_image_shape,
-                    # strides=2,
-                    # padding='same',
-                    # activation='relu'
-                ),
-                MaxPooling2D(pool_size=pool_size),
-                Dropout(0.5),
-                Flatten(),
-                Dense(output_class_size, activation="softmax"),
+                self.conv, self.max_pool, self.dropout, self.flatten, self.dense, self.softmax
             ]
         )
-
         self.model.compile(
             "adam",
             loss="categorical_crossentropy",
             metrics=["accuracy"],
         )
 
-    def get_model_without_softmax(self):
-        model = Sequential(
+        # doesn't need softmax
+        self.model_without_softmax = Sequential(
             [
-                Conv2D(
-                    num_filters,
-                    filter_size,
-                    input_shape=input_image_shape,
-                    # strides=2,
-                    # padding='same',
-                    # activation='relu'
-                ),
-                MaxPooling2D(pool_size=pool_size),
-                Dropout(0.5),
-                Flatten(),
-                Dense(output_class_size),
+                self.conv, self.max_pool, self.dropout, self.flatten, self.dense
             ]
         )
-
-        model.set_weights(self.model.get_weights())
-        return model
 
     def divide_weights(self, n):
         newweights = []
@@ -116,6 +102,7 @@ class Client:
         )
 
     def load_model(self, path):
+        self.model_without_softmax.load_weights(self.get_save_model_path(path))
         self.model.load_weights(self.get_save_model_path(path))
 
     def save_model(self, path):
@@ -131,20 +118,8 @@ class Client:
             return np.argmax(self.model.predict(x), axis=1)
 
     def predict_without_softmax(self, x):
-        model = self.get_model_without_softmax()
+        model = self.model_without_softmax
         if x.shape == input_image_shape:
             return model.predict(np.array([x]))[0]
         else:
             return model.predict(x)
-
-
-# client = Client(10,100,'0.00')
-# client.load_model(client.model_path)
-# print(client.predict(client.test_images[1]))
-# print(client.predict_without_softmax(client.test_images[1]).shape)
-# newweights = []
-# for weight in client.model.get_weights():
-#   newweights.append(weight/2)
-# client.model.set_weights(newweights)
-# client.divide_weights(2)
-# client.add_weights(client.model.get_weights(),client.model.get_weights())
