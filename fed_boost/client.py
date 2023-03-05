@@ -116,7 +116,7 @@ class Client:
         )
 
     def load_model(self, path):
-        self.model.load_weights(self.get_save_model_path())
+        self.model.load_weights(self.get_save_model_path(path))
 
     def save_model(self, path):
         self.model.save(self.get_save_model_path(path))

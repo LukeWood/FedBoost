@@ -2,7 +2,7 @@ import h5py, random
 import numpy as np
 from fed_boost.server import Server
 from scipy.optimize import line_search
-from parameters import client_size, output_class_size, client_epochs
+from fed_boost.parameters import client_size, output_class_size, client_epochs
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import  Dense
 from tensorflow.keras.utils import to_categorical
