@@ -88,7 +88,7 @@ class Client:
 
     def train_model(self):
         callbacks = [
-            tf.keras.callbacks.EarlyStopping(patience=3)
+            tf.keras.callbacks.EarlyStopping(patience=3,monitor="accuracy")
         ]
         self.model.fit(
             self.train_images,
