@@ -113,7 +113,8 @@ class Client:
         self.model.load_weights(self.get_save_model_path(path))
 
     def save_model(self, path):
-        self.model.save(self.get_save_model_path(path))
+        self.model.save_weights(self.get_save_model_path(path), save_format='h5')
+        # self.model.save(self.get_save_model_path(path))
 
     def get_save_model_path(self, path):
         return f"{path}/client_model_{str(self.client_number)}_al{self.alpha}.h5"
