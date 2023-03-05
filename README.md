@@ -17,7 +17,7 @@ python setup.py develop
 Step 2.) train the weak learners:
 
 ```
-python entrypoints/train-weak-learners.py --model_path='weak_learners/'
+python entrypoints/train-weak-learners.py --model_path='weak_learners'
 ```
 
 Step 3.) benchmark a server:
