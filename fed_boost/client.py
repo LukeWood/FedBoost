@@ -46,7 +46,7 @@ class Client:
             # padding='same',
             # activation='relu'
         )
-        self.max_pool = MaxPooling2D(pool_size=pool_size),
+        self.max_pool = MaxPooling2D(pool_size=pool_size)
         self.dropout = Dropout(0.5)
         self.flatten = Flatten()
         self.dense = Dense(output_class_size, activation=None)
