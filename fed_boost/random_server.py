@@ -1,9 +1,9 @@
 import random
-from server import Server
+from fed_boost.server import Server
 
 
 class RandomServer(Server):
-    def __init__(self, alpha, path=None):
+    def __init__(self, alpha, path):
         print(f"Creating Random Server")
         print(f"Initializing weak learners")
         super().__init__(alpha, path)

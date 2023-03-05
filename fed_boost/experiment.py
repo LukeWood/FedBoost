@@ -4,12 +4,13 @@ from fed_boost.parameters import RANDOM, AVERAGE, server_epochs, v
 
 
 class Experiment:
-    def __init__(self, type, servers_dir, results_dir):
+    def __init__(self, type, weak_learners_dir, results_dir):
         (_, _), (self.test_images, self.test_labels) = cf.load_data()
         self.alphas = alphas
         self.type = type
-        this.servers_dir = servers_dir
-        this.results_dir = results_dir
+
+        self.weak_learners_dir = weak_learners_dir
+        self.results_dir = results_dir
 
         if type == RANDOM:
             from fed_boost.random_server import RandomServer
@@ -29,11 +30,11 @@ class Experiment:
         acc_all = {}
         # self.server.load_server(servers_dir)
         print(f"Creating {self.type} server with alpha {alpha}")
-        self.server = self.serverClass(alpha)
+        self.server = self.serverClass(alpha, self.weak_learners_dir)
         print(f"Running experiment for alpha = {alpha}")
         self.server.train(server_epochs, v)
         acc = self.server.get_accuracy()
         print(f"Accuracy for {self.type} server for alpha = {alpha} is {acc}")
         print(f"Saving {self.type} server with alpha {alpha}")
-        self.server.save_server(this.servers_dir)
+        self.server.save_server(self.results_dir)
         return acc

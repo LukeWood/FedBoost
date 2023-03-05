@@ -1,10 +1,10 @@
-from client import Client
-from parameters import client_size, client_epochs
+from fed_boost.client import Client
+from fed_boost.parameters import client_size, client_epochs
 import tensorflow.keras.datasets.cifar10 as cf
 
 
 class Server:
-    def __init__(self, alpha, path=None):
+    def __init__(self, alpha, path):
         self.data_alpha = alpha
         self.weak_learners = []
         (self.train_images, self.train_labels), (
@@ -17,10 +17,7 @@ class Server:
         for client_id in range(client_size):
             print(f"loading client model {client_id} for alpha = {alpha}")
             client = Client(client_id, client_epochs, alpha)
-            if path == None:
-                client.load_model(client.model_path)
-            else:
-                client.load_model(path)
+            client.load_model(path)
             self.weak_learners.append(client)
             print(f"client model loaded")
 

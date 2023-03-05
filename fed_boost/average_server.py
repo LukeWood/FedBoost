@@ -1,8 +1,8 @@
 import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout
-from server import Server
-from parameters import (
+from fed_boost.server import Server
+from fed_boost.parameters import (
     num_filters,
     filter_size,
     pool_size,
@@ -12,7 +12,7 @@ from parameters import (
 
 
 class AverageServer(Server):
-    def __init__(self, alpha, path=None):
+    def __init__(self, alpha, path):
         print(f"Creating Average Server")
         print(f"Initializing weak learners")
         super().__init__(alpha, path)
