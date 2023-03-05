@@ -2,6 +2,13 @@
 
 # Quickstart
 
+Step 0.) clone
+
+```
+git clone https://github.com/LukeWood/FedBoost/
+cd FedBoost/
+```
+
 Step 1.) install the `fed_boost` package:
 ```
 python setup.py develop
