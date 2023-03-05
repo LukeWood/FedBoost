@@ -109,17 +109,20 @@ class Client:
             to_categorical(self.train_labels, output_class_size),
             epochs=self.client_epochs,
             validation_data=(
-                self.test_images,
-                to_categorical(self.test_labels, output_class_size),
+                self.train_images,
+                to_categorical(self.train_labels, output_class_size),
             ),
             callbacks=callbacks
         )
 
     def load_model(self, path):
-        self.model.load_weights(f"{path}_{str(self.client_number)}_al{self.alpha}.h5")
+        self.model.load_weights(self.get_save_model_path())
 
     def save_model(self, path):
-        self.model.save(f"{path}/client_model/_{str(self.client_number)}_al{self.alpha}.h5")
+        self.model.save(self.get_save_model_path(path))
+
+    def get_save_model_path(self, path):
+        return f"{path}/client_model_{str(self.client_number)}_al{self.alpha}.h5"
 
     def predict(self, x):
         if x.shape == input_image_shape:
