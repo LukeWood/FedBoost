@@ -21,6 +21,13 @@ def main():
         help=f"Choice of the alphas of datasplit among 8 possible values\n {alphas}\n",
     )
 
+    parser.add_argument(
+        "models_dir",
+        required=True
+        help=("Path of the pre-trained weak learners.  Can be produced by "
+            "the script `entrypoints/train-weak-learners.py`."),
+    )
+
     args = parser.parse_args()
     server = Experiment(args.type)
     server.run(args.alpha)

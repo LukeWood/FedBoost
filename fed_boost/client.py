@@ -6,7 +6,7 @@ import numpy as np
 import sys
 
 sys.path.append("../src")
-from parameters import (
+from fed_boost.parameters import (
     num_filters,
     filter_size,
     pool_size,
@@ -16,7 +16,7 @@ from parameters import (
     client_size,
     client_epochs,
 )
-from data_extractor import alphas, get_split_data
+from fed_boost.data_extractor import alphas, get_split_data
 
 
 class Client:
@@ -26,7 +26,6 @@ class Client:
         self.alpha = alpha
         self._set_data()
         self._set_model()
-        self.model_path = f"{models_dir}/client_model"
 
     def _set_data(self):
         (train_images, train_labels), (
@@ -117,7 +116,7 @@ class Client:
         self.model.load_weights(f"{path}_{str(self.client_number)}_al{self.alpha}.h5")
 
     def save_model(self, path):
-        self.model.save(f"{path}_{str(self.client_number)}_al{self.alpha}.h5")
+        self.model.save(f"{path}/client_model/_{str(self.client_number)}_al{self.alpha}.h5")
 
     def predict(self, x):
         if x.shape == input_image_shape:

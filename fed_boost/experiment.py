@@ -1,13 +1,16 @@
 import tensorflow.keras.datasets.cifar10 as cf
 from fed_boost.data_extractor import alphas
-from fed_boost.parameters import RANDOM, AVERAGE, server_epochs, v, servers_dir, results_dir
+from fed_boost.parameters import RANDOM, AVERAGE, server_epochs, v
 
 
 class Experiment:
-    def __init__(self, type):
+    def __init__(self, type, servers_dir, results_dir):
         (_, _), (self.test_images, self.test_labels) = cf.load_data()
         self.alphas = alphas
         self.type = type
+        this.servers_dir = servers_dir
+        this.results_dir = results_dir
+
         if type == RANDOM:
             from fed_boost.random_server import RandomServer
 
@@ -32,5 +35,5 @@ class Experiment:
         acc = self.server.get_accuracy()
         print(f"Accuracy for {self.type} server for alpha = {alpha} is {acc}")
         print(f"Saving {self.type} server with alpha {alpha}")
-        self.server.save_server(servers_dir)
+        self.server.save_server(this.servers_dir)
         return acc
