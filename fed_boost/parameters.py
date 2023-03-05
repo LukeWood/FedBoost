@@ -3,9 +3,9 @@ filter_size = 3
 pool_size = 2
 input_image_shape = (32, 32, 3)
 output_class_size = 10
-client_size = 100
+client_size = 3
 client_epochs = 100
-server_epochs = 100
+server_epochs = 3
 v = 1 / server_epochs
 
 RANDOM = "random"
