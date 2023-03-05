@@ -3,16 +3,15 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropou
 from tensorflow.keras.utils import to_categorical
 import tensorflow.keras.datasets.cifar10 as cf
 import numpy as np
+import tensorflow as tf
 import sys
 
-sys.path.append("../src")
 from fed_boost.parameters import (
     num_filters,
     filter_size,
     pool_size,
     input_image_shape,
     output_class_size,
-    models_dir,
     client_size,
     client_epochs,
 )
@@ -102,6 +101,9 @@ class Client:
             return sum
 
     def train_model(self):
+        callbacks = [
+            tf.keras.callbacks.EarlyStopping(patience=3)
+        ]
         self.model.fit(
             self.train_images,
             to_categorical(self.train_labels, output_class_size),
@@ -110,6 +112,7 @@ class Client:
                 self.test_images,
                 to_categorical(self.test_labels, output_class_size),
             ),
+            callbacks=callbacks
         )
 
     def load_model(self, path):

@@ -1,10 +1,11 @@
-# python train-weak-learners.py --model_path='models/'
+# python train-weak-learners.py --model_path='weak_learners/'
 
+import argparse
 from fed_boost.experiment import Experiment
 from fed_boost.parameters import RANDOM, AVERAGE, GDBOOST
 from fed_boost.data_extractor import alphas
 from fed_boost.client import Client
-
+from fed_boost.parameters import client_size, client_epochs
 
 def main():
     parser = argparse.ArgumentParser(
@@ -12,9 +13,9 @@ def main():
     )
 
     parser.add_argument(
-        "model_path",
+        "--model_path",
         required=True,
-        help=f"Which model to save weak learners to.",
+        help=f"Which directory to save weak learners to.",
     )
 
     args = parser.parse_args()
