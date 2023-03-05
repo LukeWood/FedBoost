@@ -24,19 +24,6 @@ class Client:
         self.client_epochs = client_epochs
         self.alpha = alpha
         self._set_data()
-        self._set_model()
-
-    def _set_data(self):
-        (train_images, train_labels), (
-            self.test_images,
-            self.test_labels,
-        ) = cf.load_data()
-        data_split = get_split_data(self.alpha)
-        self.train_images = data_split[self.client_number]["x_train"]
-        self.train_labels = data_split[self.client_number]["y_train"]
-        # Normalize the images.
-        self.train_images = (self.train_images / 255) - 0.5
-        self.test_images = (self.test_images / 255) - 0.5
 
         self.conv = Conv2D(
             num_filters,
@@ -68,6 +55,19 @@ class Client:
                 self.conv, self.max_pool, self.dropout, self.flatten, self.dense
             ]
         )
+
+    def _set_data(self):
+        (train_images, train_labels), (
+            self.test_images,
+            self.test_labels,
+        ) = cf.load_data()
+        data_split = get_split_data(self.alpha)
+        self.train_images = data_split[self.client_number]["x_train"]
+        self.train_labels = data_split[self.client_number]["y_train"]
+        # Normalize the images.
+        self.train_images = (self.train_images / 255) - 0.5
+        self.test_images = (self.test_images / 255) - 0.5
+
 
     def divide_weights(self, n):
         newweights = []
