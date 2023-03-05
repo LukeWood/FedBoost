@@ -38,8 +38,9 @@ class GDBoostServer(Server):
         print(f'server model ready')
 
     def f(self,x):
-        self.alpha_producer = np.linalg.pinv(np.array(list(map(lambda y: y.predict_without_softmax(x),self.weak_learners))).T)
-        return np.sum(np.array(list(map(lambda y: y[1].predict_without_softmax(x)*self.af[y[0]],enumerate(self.weak_learners)))),axis=0)
+        r = [y.predict_without_softmax(x) for y in self.weak_learners]
+        self.alpha_producer = np.linalg.pinv(np.array(r).T)
+        return np.sum(np.array([res * self.af[i] for res, i in enumerate(r)]),axis=0)
 
     def w(self,x,z):
         f_x = self.f(x)
