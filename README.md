@@ -1,10 +1,10 @@
 # FedBoost
 
-TODO(anyone): write overview
+# Quickstart
 
-# Overview
-
-# Code Structure
+```
+python setup.py develop
+```
 
 # References
 
