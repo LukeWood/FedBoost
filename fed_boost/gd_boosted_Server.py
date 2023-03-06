@@ -2,7 +2,7 @@ import h5py, random
 import numpy as np
 from fed_boost.server import Server
 from scipy.optimize import line_search
-from fed_boost.parameters import client_size, output_class_size, client_epochs,input_image_shape
+from fed_boost.parameters import client_size, output_class_size, client_epochs
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.utils import to_categorical
@@ -62,7 +62,7 @@ class GDBoostServer(Server):
     def calculate_w_matrix(self):
         self.w_matrix = []
         for i in range(len(self.train_labels)):
-            x, z = self.train_images[i].reshape(input_image_shape), self.train_labels[i][0]
+            x, z = self.train_images[i], self.train_labels[i][0]
             self.w_matrix.append(self.w(x, z))
         self.w_matrix = np.array(self.w_matrix)
 
