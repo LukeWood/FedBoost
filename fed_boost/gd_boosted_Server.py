@@ -82,7 +82,7 @@ class GDBoostServer(Server):
         self.train_g_model()
         random_test_index = random.sample(range(len(self.test_labels)), 1)[0]
         x, z = self.test_images[random_test_index], self.test_labels[random_test_index][0]
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         result = line_search(
             self.get_objective(z), self.get_gradient(z), np.linalg.norm(self.f(x)), np.linalg.norm(self.g(x, z))
         )
