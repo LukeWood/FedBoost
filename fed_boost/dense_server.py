@@ -84,7 +84,7 @@ class DenseServer(Server):
             self.get_objective(z), self.get_gradient(z), np.linalg.norm(self.f(x)), np.linalg.norm(self.g(x, z))
         )
         alpha = result[0]
-        new_f = self.f(x) + v * alpha * self.g(x)
+        new_f = self.f(x) + v * alpha * self.g(x,z)
         self.af = np.matmul(self.alpha_producer, new_f)
 
     def predict(self, x):
