@@ -2,7 +2,7 @@ import h5py, random
 import numpy as np
 from fed_boost.server import Server
 from scipy.optimize import line_search
-from fed_boost.parameters import client_size, output_class_size, client_epochs
+from fed_boost.parameters import client_size, output_class_size, client_epochs,input_image_shape
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.utils import to_categorical
@@ -10,18 +10,18 @@ from tensorflow.keras.utils import to_categorical
 
 class GDBoostServer(Server):
     def get_objective(self, z):
-        g = to_categorical(z, output_class_size)
+        # g = to_categorical(z, output_class_size)
 
         def objective(w):
-            return (g - w) ** 2
+            return (z - w) ** 2
 
         return objective
 
     def get_gradient(self, z):
-        g = to_categorical(z, output_class_size)
+        # g = to_categorical(z, output_class_size)
 
         def gradient(w):
-            return -2 * (g - w)
+            return -2 * (z - w)
 
         return gradient
 
@@ -54,10 +54,6 @@ class GDBoostServer(Server):
         result[z] = np.sum(result)
         return result
 
-    def alpha(self, x, z):
-        w = self.w(x, z)
-        f = self.f(x)
-        return np.min(f / w)
 
     def g(self, x, z):
         w_curr = self.w(x, z)
@@ -66,7 +62,7 @@ class GDBoostServer(Server):
     def calculate_w_matrix(self):
         self.w_matrix = []
         for i in range(len(self.train_labels)):
-            x, z = self.train_images[i], self.train_labels[i]
+            x, z = self.train_images[i].reshape(input_image_shape), self.train_labels[i][0]
             self.w_matrix.append(self.w(x, z))
         self.w_matrix = np.array(self.w_matrix)
 
@@ -84,10 +80,11 @@ class GDBoostServer(Server):
     def one_iteration(self, v):
         self.calculate_w_matrix()
         self.train_g_model()
-        random_test_index = random.sample(range(len(self.test_labels)), 1)
-        x, z = self.test_images[random_test_index], self.test_labels[random_test_index]
+        random_test_index = random.sample(range(len(self.test_labels)), 1)[0]
+        x, z = self.test_images[random_test_index], self.test_labels[random_test_index][0]
+        import pdb; pdb.set_trace()
         result = line_search(
-            self.get_objective(z), self.get_gradient(z), self.f(x), self.g(x, z)
+            self.get_objective(z), self.get_gradient(z), np.linalg.norm(self.f(x)), np.linalg.norm(self.g(x, z))
         )
         alpha = result[0]
         new_f = self.f(x) + v * alpha * self.g(x)
