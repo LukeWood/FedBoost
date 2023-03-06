@@ -93,27 +93,27 @@ class DenseServer(Server):
     def save_server(self, path):
         h5f = h5py.File(f"{path}/gdboost_server_extra_data_al{self.data_alpha}.h5", "w")
         h5f.create_dataset("alpha", data=self.af)
-        h5f.create_dataset("history_iter", data=self.history_iter)
+        h5f.create_dataset("loss_iter", data=np.array(self.loss_iter))
         h5f.close()
-        self.model.save(f"{path}/gdboost_server_model_al{self.data_alpha}.h5")
+        self.model.save_weights(f"{path}/gdboost_server_model_al{self.data_alpha}.h5", save_format='h5')
         for i in range(len(self.weak_learners)):
             self.weak_learners[i].save_model(f"{path}/gdboost_server")
 
     def load_server(self, path):
         h5f = h5py.File(f"{path}/gdboost_server_extra_data_al{self.data_alpha}.h5", "r")
         self.af = h5f["alpha"][:]
-        self.history_iter = h5f["history_iter"][:]
+        self.loss_iter = h5f["loss_iter"][:]
         h5f.close()
         self.model.load_weights(f"{path}/gdboost_server_model_al{self.data_alpha}.h5")
         for i in range(len(self.weak_learners)):
             self.weak_learners[i].load_model(f"{path}/gdboost_server")
 
     def train(self, Nb, v):
-        self.history_iter = []
+        self.loss_iter = []
         print(f"Training Server")
         for i in range(Nb):
             self.one_iteration(v)
-            self.history_iter.append(self.history)
+            self.loss_iter.append(self.history.history['loss'])
             print("Training done")
             print(f"Loss after {i} iteration is {self.history.history['loss']}")
         print(f"Training Server Done")
