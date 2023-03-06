@@ -22,7 +22,7 @@ class DenseServer(Server):
         )
         self.model.compile(
             "adam",
-            loss="lse",
+            loss="categorical_crossentropy",
             metrics=["accuracy"],
         )
         print(f"Weak learners are loaded")
@@ -52,10 +52,6 @@ class DenseServer(Server):
         result[z] = np.sum(result)
         return result
 
-    def alpha(self, x, z):
-        w = self.w(x, z)
-        f = self.f(x)
-        return np.min(f / w)
 
     def g(self, x, z):
         w_curr = self.w(x, z)
@@ -64,7 +60,7 @@ class DenseServer(Server):
     def calculate_w_matrix(self):
         self.w_matrix = []
         for i in range(len(self.train_labels)):
-            x, z = self.train_images[i], self.train_labels[i]
+            x, z = self.train_images[i], self.train_labels[i][0]
             self.w_matrix.append(self.w(x, z))
         self.w_matrix = np.array(self.w_matrix)
 
@@ -74,21 +70,21 @@ class DenseServer(Server):
             to_categorical(self.train_labels, output_class_size),
             epochs=client_epochs,
             validation_data=(
-                self.test_images,
-                to_categorical(self.test_labels, output_class_size),
+                self.w_matrix,
+                to_categorical(self.train_labels, output_class_size),
             ),
         )
 
     def one_iteration(self, v):
         self.calculate_w_matrix()
         self.train_g_model()
-        random_test_index = random.sample(range(len(self.test_labels)), 1)
-        x, z = self.test_images[random_test_index], self.test_labels[random_test_index]
+        random_test_index = random.sample(range(len(self.test_labels)), 1)[0]
+        x, z = self.test_images[random_test_index], self.test_labels[random_test_index][0]
         result = line_search(
-            self.get_objective(z), self.get_gradient(z), self.f(x), self.g(x, z)
+            self.get_objective(z), self.get_gradient(z), np.linalg.norm(self.f(x)), np.linalg.norm(self.g(x, z))
         )
         alpha = result[0]
-        new_f = self.f(x) + v * alpha * self.g(x)
+        new_f = self.f(x) + v * alpha * self.g(x,z)
         self.af = np.matmul(self.alpha_producer, new_f)
 
     def predict(self, x):
@@ -97,27 +93,27 @@ class DenseServer(Server):
     def save_server(self, path):
         h5f = h5py.File(f"{path}/gdboost_server_extra_data_al{self.data_alpha}.h5", "w")
         h5f.create_dataset("alpha", data=self.af)
-        h5f.create_dataset("history_iter", data=self.history_iter)
+        h5f.create_dataset("loss_iter", data=np.array(self.loss_iter))
         h5f.close()
-        self.model.save(f"{path}/gdboost_server_model_al{self.data_alpha}.h5")
+        self.model.save_weights(f"{path}/gdboost_server_model_al{self.data_alpha}.h5", save_format='h5')
         for i in range(len(self.weak_learners)):
             self.weak_learners[i].save_model(f"{path}/gdboost_server")
 
     def load_server(self, path):
         h5f = h5py.File(f"{path}/gdboost_server_extra_data_al{self.data_alpha}.h5", "r")
         self.af = h5f["alpha"][:]
-        self.history_iter = h5f["history_iter"][:]
+        self.loss_iter = h5f["loss_iter"][:]
         h5f.close()
         self.model.load_weights(f"{path}/gdboost_server_model_al{self.data_alpha}.h5")
         for i in range(len(self.weak_learners)):
             self.weak_learners[i].load_model(f"{path}/gdboost_server")
 
     def train(self, Nb, v):
-        self.history_iter = []
+        self.loss_iter = []
         print(f"Training Server")
         for i in range(Nb):
             self.one_iteration(v)
-            self.history_iter.append(self.history)
+            self.loss_iter.append(self.history.history['loss'])
             print("Training done")
             print(f"Loss after {i} iteration is {self.history.history['loss']}")
         print(f"Training Server Done")

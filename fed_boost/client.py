@@ -11,7 +11,6 @@ from tensorflow.keras.utils import to_categorical
 import tensorflow.keras.datasets.cifar10 as cf
 import numpy as np
 import tensorflow as tf
-import sys
 
 from fed_boost.parameters import (
     num_filters,
@@ -19,8 +18,6 @@ from fed_boost.parameters import (
     pool_size,
     input_image_shape,
     output_class_size,
-    client_size,
-    client_epochs,
 )
 from fed_boost.data_extractor import alphas, get_split_data
 
