@@ -1,5 +1,5 @@
 from fed_boost.experiment import Experiment
-from fed_boost.parameters import RANDOM, AVERAGE, GDBOOST
+from fed_boost.parameters import RANDOM, AVERAGE, AVERAGE_OUTPUT, GDBOOST
 from fed_boost.data_extractor import alphas
 
 import argparse
@@ -13,8 +13,8 @@ def main():
     parser.add_argument(
         "--type",
         required=True,
-        choices=[RANDOM, AVERAGE, GDBOOST],
-        help=f"Choice of the type of server among 3 implementations\n1) {RANDOM}\n2) {AVERAGE}\n3) {GDBOOST}",
+        choices=[RANDOM, AVERAGE, AVERAGE_OUTPUT, GDBOOST],
+        help=f"Choice of the type of server among 3 implementations\n1) {RANDOM}\n2) {AVERAGE}\n3) {AVERAGE}\n4) {GDBOOST}",
     )
     parser.add_argument(
         "--alpha",
