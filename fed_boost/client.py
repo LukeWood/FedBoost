@@ -112,6 +112,9 @@ class Client:
     def save_model(self, path):
         self.model.save_weights(self.get_save_model_path(path), save_format='h5')
         # self.model.save(self.get_save_model_path(path))
+    
+    def get_accuracy(self):
+        return np.sum(np.argmax(self.model.predict(self.test_images),axis=1) == self.test_labels.flatten())/len(self.test_labels.flatten())
 
     def get_save_model_path(self, path):
         return f"{path}/client_model_{str(self.client_number)}_al{self.alpha}.h5"

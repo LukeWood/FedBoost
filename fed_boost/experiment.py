@@ -1,6 +1,6 @@
 import tensorflow.keras.datasets.cifar10 as cf
 from fed_boost.data_extractor import alphas
-from fed_boost.parameters import RANDOM, AVERAGE, server_epochs, v
+from fed_boost.parameters import RANDOM, AVERAGE, AVERAGE_OUTPUT, server_epochs, v
 
 
 class Experiment:
@@ -20,6 +20,10 @@ class Experiment:
             from fed_boost.average_server import AverageServer
 
             self.serverClass = AverageServer
+        elif type == AVERAGE_OUTPUT:
+            from fed_boost.average_output_server import AverageOutputServer
+
+            self.serverClass = AverageOutputServer
         else:
             from fed_boost.gd_boosted_Server import GDBoostServer
 

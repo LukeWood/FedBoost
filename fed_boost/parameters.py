@@ -10,4 +10,5 @@ v = 1 / server_epochs
 
 RANDOM = "random"
 AVERAGE = "average"
+AVERAGE_OUTPUT = "average_output"
 GDBOOST = "gdboost"

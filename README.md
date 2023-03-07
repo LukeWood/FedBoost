@@ -17,15 +17,21 @@ python setup.py develop
 Step 2.) train the weak learners:
 
 ```
-python entrypoints/train-weak-learners.py --model_path='weak_learners'
+python entrypoints/train-weak-learners.py --model_path='h5_weak_learners_3'
 ```
 
-Step 3.) benchmark a server:
+Step 3.) test the weak learners:
+
 ```
-python entrypoints/benchmark-server.py --type random --alpha 0.00 --models_dir weak_learners --results_dir results
+python entrypoints/test-weak-learners.py --model_path='h5_weak_learners_3'
 ```
 
-Step 4.) benchmark all servers:
+Step 4.) benchmark a server:
+```
+python entrypoints/benchmark-server.py --type random --alpha 0.00 --models_dir h5_weak_learners_3 --results_dir results
+```
+
+Step 5.) benchmark all servers:
 ```
 ./entrypoints/benchmark-all-servers.sh
 ```
